@@ -92,14 +92,14 @@ typedef struct {
     tsk_flags_t flags;
     /** @brief Spatial location. The number of dimensions is defined by
      * ``location_length``. */
-    double *location;
+    const double *location;
     /** @brief Number of spatial dimensions. */
     tsk_size_t location_length;
     /** @brief Metadata. */
     const char *metadata;
     /** @brief Size of the metadata in bytes. */
     tsk_size_t metadata_length;
-    tsk_id_t *nodes;
+    const tsk_id_t *nodes;
     tsk_size_t nodes_length;
 } tsk_individual_t;
 
@@ -203,7 +203,7 @@ typedef struct {
     const char *metadata;
     /** @brief Metadata length in bytes. */
     tsk_size_t metadata_length;
-    tsk_mutation_t *mutations;
+    const tsk_mutation_t *mutations;
     tsk_size_t mutations_length;
 } tsk_site_t;
 
@@ -780,7 +780,7 @@ of the columns in this table.
     or a negative value on failure.
 */
 tsk_id_t tsk_individual_table_add_row(tsk_individual_table_t *self, tsk_flags_t flags,
-    double *location, tsk_size_t location_length, const char *metadata,
+    const double *location, tsk_size_t location_length, const char *metadata,
     tsk_size_t metadata_length);
 
 /**
@@ -855,7 +855,7 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_individual_table_get_row(
-    tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row);
+    const tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row);
 
 /**
 @brief Set the metadata schema
@@ -894,7 +894,7 @@ int tsk_individual_table_set_columns(tsk_individual_table_t *self, tsk_size_t nu
 int tsk_individual_table_append_columns(tsk_individual_table_t *self,
     tsk_size_t num_rows, tsk_flags_t *flags, const double *location,
     tsk_size_t *location_length, const char *metadata, tsk_size_t *metadata_length);
-int tsk_individual_table_dump_text(tsk_individual_table_t *self, FILE *out);
+int tsk_individual_table_dump_text(const tsk_individual_table_t *self, FILE *out);
 int tsk_individual_table_set_max_rows_increment(
     tsk_individual_table_t *self, tsk_size_t max_rows_increment);
 int tsk_individual_table_set_max_metadata_length_increment(
@@ -1024,7 +1024,8 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
     values in the specified row.
 @return Return 0 on success or a negative value on failure.
 */
-int tsk_node_table_get_row(tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row);
+int tsk_node_table_get_row(
+    const tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row);
 
 /**
 @brief Set the metadata schema
@@ -1065,7 +1066,7 @@ int tsk_node_table_set_columns(tsk_node_table_t *self, tsk_size_t num_rows,
 int tsk_node_table_append_columns(tsk_node_table_t *self, tsk_size_t num_rows,
     tsk_flags_t *flags, const double *time, const tsk_id_t *population,
     const tsk_id_t *individual, const char *metadata, const tsk_size_t *metadata_length);
-int tsk_node_table_dump_text(tsk_node_table_t *self, FILE *out);
+int tsk_node_table_dump_text(const tsk_node_table_t *self, FILE *out);
 
 /**
 @defgroup EDGE_TABLE_API_GROUP Edge table API.
@@ -1199,7 +1200,8 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
     values in the specified row.
 @return Return 0 on success or a negative value on failure.
 */
-int tsk_edge_table_get_row(tsk_edge_table_t *self, tsk_id_t index, tsk_edge_t *row);
+int tsk_edge_table_get_row(
+    const tsk_edge_table_t *self, tsk_id_t index, tsk_edge_t *row);
 
 /**
 @brief Set the metadata schema
@@ -1371,7 +1373,7 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_migration_table_get_row(
-    tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row);
+    const tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row);
 
 /**
 @brief Set the metadata schema
@@ -1537,7 +1539,8 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
     values in the specified row.
 @return Return 0 on success or a negative value on failure.
 */
-int tsk_site_table_get_row(tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row);
+int tsk_site_table_get_row(
+    const tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row);
 
 /**
 @brief Set the metadata schema
@@ -1710,7 +1713,7 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_mutation_table_get_row(
-    tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row);
+    const tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row);
 
 /**
 @brief Set the metadata schema
@@ -1877,7 +1880,7 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_population_table_get_row(
-    tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row);
+    const tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row);
 
 /**
 @brief Set the metadata schema
@@ -2040,7 +2043,7 @@ next operation that modifies the table (e.g., by adding a new row), but not afte
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_provenance_table_get_row(
-    tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row);
+    const tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row);
 
 /**
 @brief Print out the state of this table to the specified stream.
@@ -2470,7 +2473,7 @@ TSK_NO_CHECK_INTEGRITY
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_table_collection_sort(
-    tsk_table_collection_t *self, tsk_bookmark_t *start, tsk_flags_t options);
+    tsk_table_collection_t *self, const tsk_bookmark_t *start, tsk_flags_t options);
 
 /**
 @brief Simplify the tables to remove redundant information.
@@ -2538,7 +2541,7 @@ completes.
     between nodes IDs in the table collection before and after simplification.
 @return Return 0 on success or a negative value on failure.
 */
-int tsk_table_collection_simplify(tsk_table_collection_t *self, tsk_id_t *samples,
+int tsk_table_collection_simplify(tsk_table_collection_t *self, const tsk_id_t *samples,
     tsk_size_t num_samples, tsk_flags_t options, tsk_id_t *node_map);
 
 /**
@@ -2575,7 +2578,7 @@ nodes (and individuals and populations) reordered.
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_table_collection_subset(
-    tsk_table_collection_t *self, tsk_id_t *nodes, tsk_size_t num_nodes);
+    tsk_table_collection_t *self, const tsk_id_t *nodes, tsk_size_t num_nodes);
 
 /**
 @brief Forms the node-wise union of two table collections.
@@ -2630,7 +2633,8 @@ will be added to self).
 @return Return 0 on success or a negative value on failure.
 */
 int tsk_table_collection_union(tsk_table_collection_t *self,
-    tsk_table_collection_t *other, tsk_id_t *other_node_mapping, tsk_flags_t options);
+    const tsk_table_collection_t *other, const tsk_id_t *other_node_mapping,
+    tsk_flags_t options);
 
 /**
 @brief Set the metadata

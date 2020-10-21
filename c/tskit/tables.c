@@ -487,7 +487,7 @@ out:
 
 static tsk_id_t
 tsk_individual_table_add_row_internal(tsk_individual_table_t *self, tsk_flags_t flags,
-    double *location, tsk_size_t location_length, const char *metadata,
+    const double *location, tsk_size_t location_length, const char *metadata,
     tsk_size_t metadata_length)
 {
     tsk_bug_assert(self->num_rows < self->max_rows);
@@ -508,7 +508,7 @@ tsk_individual_table_add_row_internal(tsk_individual_table_t *self, tsk_flags_t 
 
 tsk_id_t
 tsk_individual_table_add_row(tsk_individual_table_t *self, tsk_flags_t flags,
-    double *location, tsk_size_t location_length, const char *metadata,
+    const double *location, tsk_size_t location_length, const char *metadata,
     tsk_size_t metadata_length)
 {
     int ret = 0;
@@ -604,7 +604,7 @@ tsk_individual_table_print_state(const tsk_individual_table_t *self, FILE *out)
 
 static inline void
 tsk_individual_table_get_row_unsafe(
-    tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row)
+    const tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row)
 {
     row->id = (tsk_id_t) index;
     row->flags = self->flags[index];
@@ -622,7 +622,7 @@ tsk_individual_table_get_row_unsafe(
 
 int
 tsk_individual_table_get_row(
-    tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row)
+    const tsk_individual_table_t *self, tsk_id_t index, tsk_individual_t *row)
 {
     int ret = 0;
 
@@ -644,7 +644,7 @@ tsk_individual_table_set_metadata_schema(tsk_individual_table_t *self,
 }
 
 int
-tsk_individual_table_dump_text(tsk_individual_table_t *self, FILE *out)
+tsk_individual_table_dump_text(const tsk_individual_table_t *self, FILE *out)
 {
     int ret = TSK_ERR_IO;
     tsk_size_t j, k;
@@ -1121,7 +1121,7 @@ tsk_node_table_set_metadata_schema(tsk_node_table_t *self, const char *metadata_
 }
 
 int
-tsk_node_table_dump_text(tsk_node_table_t *self, FILE *out)
+tsk_node_table_dump_text(const tsk_node_table_t *self, FILE *out)
 {
     int ret = TSK_ERR_IO;
     size_t j;
@@ -1182,7 +1182,8 @@ tsk_node_table_equals(const tsk_node_table_t *self, const tsk_node_table_t *othe
 }
 
 static inline void
-tsk_node_table_get_row_unsafe(tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row)
+tsk_node_table_get_row_unsafe(
+    const tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row)
 {
     row->id = (tsk_id_t) index;
     row->flags = self->flags[index];
@@ -1195,7 +1196,7 @@ tsk_node_table_get_row_unsafe(tsk_node_table_t *self, tsk_id_t index, tsk_node_t
 }
 
 int
-tsk_node_table_get_row(tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row)
+tsk_node_table_get_row(const tsk_node_table_t *self, tsk_id_t index, tsk_node_t *row)
 {
     int ret = 0;
 
@@ -1613,7 +1614,7 @@ tsk_edge_table_get_row_unsafe(
 }
 
 int
-tsk_edge_table_get_row(tsk_edge_table_t *self, tsk_id_t index, tsk_edge_t *row)
+tsk_edge_table_get_row(const tsk_edge_table_t *self, tsk_id_t index, tsk_edge_t *row)
 {
     int ret = 0;
 
@@ -2251,7 +2252,8 @@ tsk_site_table_print_state(const tsk_site_table_t *self, FILE *out)
 }
 
 static inline void
-tsk_site_table_get_row_unsafe(tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row)
+tsk_site_table_get_row_unsafe(
+    const tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row)
 {
     row->id = (tsk_id_t) index;
     row->position = self->position[index];
@@ -2268,7 +2270,7 @@ tsk_site_table_get_row_unsafe(tsk_site_table_t *self, tsk_id_t index, tsk_site_t
 }
 
 int
-tsk_site_table_get_row(tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row)
+tsk_site_table_get_row(const tsk_site_table_t *self, tsk_id_t index, tsk_site_t *row)
 {
     int ret = 0;
 
@@ -2837,7 +2839,7 @@ tsk_mutation_table_print_state(const tsk_mutation_table_t *self, FILE *out)
 
 static inline void
 tsk_mutation_table_get_row_unsafe(
-    tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row)
+    const tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row)
 {
     row->id = (tsk_id_t) index;
     row->site = self->site[index];
@@ -2854,7 +2856,7 @@ tsk_mutation_table_get_row_unsafe(
 
 int
 tsk_mutation_table_get_row(
-    tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row)
+    const tsk_mutation_table_t *self, tsk_id_t index, tsk_mutation_t *row)
 {
     int ret = 0;
 
@@ -3307,7 +3309,7 @@ tsk_migration_table_print_state(const tsk_migration_table_t *self, FILE *out)
 
 static inline void
 tsk_migration_table_get_row_unsafe(
-    tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row)
+    const tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row)
 {
     row->id = (tsk_id_t) index;
     row->left = self->left[index];
@@ -3323,7 +3325,7 @@ tsk_migration_table_get_row_unsafe(
 
 int
 tsk_migration_table_get_row(
-    tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row)
+    const tsk_migration_table_t *self, tsk_id_t index, tsk_migration_t *row)
 {
     int ret = 0;
 
@@ -3754,7 +3756,7 @@ tsk_population_table_print_state(const tsk_population_table_t *self, FILE *out)
 
 static inline void
 tsk_population_table_get_row_unsafe(
-    tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row)
+    const tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row)
 {
     row->id = (tsk_id_t) index;
     row->metadata_length
@@ -3764,7 +3766,7 @@ tsk_population_table_get_row_unsafe(
 
 int
 tsk_population_table_get_row(
-    tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row)
+    const tsk_population_table_t *self, tsk_id_t index, tsk_population_t *row)
 {
     int ret = 0;
 
@@ -4244,7 +4246,7 @@ tsk_provenance_table_print_state(const tsk_provenance_table_t *self, FILE *out)
 
 static inline void
 tsk_provenance_table_get_row_unsafe(
-    tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row)
+    const tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row)
 {
     row->id = (tsk_id_t) index;
     row->timestamp_length
@@ -4256,7 +4258,7 @@ tsk_provenance_table_get_row_unsafe(
 
 int
 tsk_provenance_table_get_row(
-    tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row)
+    const tsk_provenance_table_t *self, tsk_id_t index, tsk_provenance_t *row)
 {
     int ret = 0;
 
@@ -6329,7 +6331,7 @@ out:
 }
 
 static int
-simplifier_init_samples(simplifier_t *self, tsk_id_t *samples)
+simplifier_init_samples(simplifier_t *self, const tsk_id_t *samples)
 {
     int ret = 0;
     size_t j;
@@ -6361,7 +6363,7 @@ out:
 }
 
 static int
-simplifier_init(simplifier_t *self, tsk_id_t *samples, size_t num_samples,
+simplifier_init(simplifier_t *self, const tsk_id_t *samples, size_t num_samples,
     tsk_table_collection_t *tables, tsk_flags_t options)
 {
     int ret = 0;
@@ -8423,7 +8425,7 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_table_collection_simplify(tsk_table_collection_t *self, tsk_id_t *samples,
+tsk_table_collection_simplify(tsk_table_collection_t *self, const tsk_id_t *samples,
     tsk_size_t num_samples, tsk_flags_t options, tsk_id_t *node_map)
 {
     int ret = 0;
@@ -8508,7 +8510,7 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_table_collection_sort(
-    tsk_table_collection_t *self, tsk_bookmark_t *start, tsk_flags_t options)
+    tsk_table_collection_t *self, const tsk_bookmark_t *start, tsk_flags_t options)
 {
     int ret = 0;
     tsk_table_sorter_t sorter;
@@ -8911,7 +8913,7 @@ tsk_table_collection_clear(tsk_table_collection_t *self)
 
 static int
 tsk_table_collection_add_and_remap_node(tsk_table_collection_t *self,
-    tsk_table_collection_t *other, tsk_id_t node_id, tsk_id_t *individual_map,
+    const tsk_table_collection_t *other, tsk_id_t node_id, tsk_id_t *individual_map,
     tsk_id_t *population_map, tsk_id_t *node_map, bool add_populations)
 {
     int ret = 0;
@@ -8975,7 +8977,7 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_table_collection_subset(
-    tsk_table_collection_t *self, tsk_id_t *nodes, tsk_size_t num_nodes)
+    tsk_table_collection_t *self, const tsk_id_t *nodes, tsk_size_t num_nodes)
 {
     int ret = 0;
     tsk_id_t k, i, new_parent, new_child, new_node;
@@ -9101,8 +9103,9 @@ out:
 }
 
 static int
-tsk_check_subset_equality(tsk_table_collection_t *self, tsk_table_collection_t *other,
-    tsk_id_t *other_node_mapping, tsk_size_t num_shared_nodes)
+tsk_check_subset_equality(tsk_table_collection_t *self,
+    const tsk_table_collection_t *other, const tsk_id_t *other_node_mapping,
+    tsk_size_t num_shared_nodes)
 {
     int ret = 0;
     tsk_id_t k, i;
@@ -9168,8 +9171,9 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_table_collection_union(tsk_table_collection_t *self, tsk_table_collection_t *other,
-    tsk_id_t *other_node_mapping, tsk_flags_t options)
+tsk_table_collection_union(tsk_table_collection_t *self,
+    const tsk_table_collection_t *other, const tsk_id_t *other_node_mapping,
+    tsk_flags_t options)
 {
     int ret = 0;
     tsk_id_t k, i, new_parent, new_child;
