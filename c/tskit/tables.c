@@ -392,8 +392,8 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_individual_table_set_columns(tsk_individual_table_t *self, tsk_size_t num_rows,
-    tsk_flags_t *flags, const double *location, tsk_size_t *location_offset,
-    const char *metadata, tsk_size_t *metadata_offset)
+    const tsk_flags_t *flags, const double *location, const tsk_size_t *location_offset,
+    const char *metadata, const tsk_size_t *metadata_offset)
 {
     int ret;
 
@@ -409,8 +409,8 @@ out:
 
 int
 tsk_individual_table_append_columns(tsk_individual_table_t *self, tsk_size_t num_rows,
-    tsk_flags_t *flags, const double *location, tsk_size_t *location_offset,
-    const char *metadata, tsk_size_t *metadata_offset)
+    const tsk_flags_t *flags, const double *location, const tsk_size_t *location_offset,
+    const char *metadata, const tsk_size_t *metadata_offset)
 {
     int ret;
     tsk_size_t j, metadata_length, location_length;
@@ -930,7 +930,7 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_node_table_set_columns(tsk_node_table_t *self, tsk_size_t num_rows,
-    tsk_flags_t *flags, const double *time, const tsk_id_t *population,
+    const tsk_flags_t *flags, const double *time, const tsk_id_t *population,
     const tsk_id_t *individual, const char *metadata, const tsk_size_t *metadata_offset)
 {
     int ret;
@@ -947,7 +947,7 @@ out:
 
 int
 tsk_node_table_append_columns(tsk_node_table_t *self, tsk_size_t num_rows,
-    tsk_flags_t *flags, const double *time, const tsk_id_t *population,
+    const tsk_flags_t *flags, const double *time, const tsk_id_t *population,
     const tsk_id_t *individual, const char *metadata, const tsk_size_t *metadata_offset)
 {
     int ret;
