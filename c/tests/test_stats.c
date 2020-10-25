@@ -417,8 +417,8 @@ verify_node_general_stat_errors(tsk_treeseq_t *ts)
     verify_summary_func_errors(ts, TSK_STAT_NODE);
 }
 
-typedef int one_way_weighted_method(tsk_treeseq_t *self, tsk_size_t num_weights,
-    double *weights, tsk_size_t num_windows, double *windows, double *result,
+typedef int one_way_weighted_method(const tsk_treeseq_t *self, tsk_size_t num_weights,
+    const double *weights, tsk_size_t num_windows, const double *windows, double *result,
     tsk_flags_t options);
 
 static void
@@ -442,9 +442,9 @@ verify_one_way_weighted_func_errors(tsk_treeseq_t *ts, one_way_weighted_method *
     free(weights);
 }
 
-typedef int one_way_weighted_covariate_method(tsk_treeseq_t *self,
-    tsk_size_t num_weights, double *weights, tsk_size_t num_covariates,
-    double *covariates, tsk_size_t num_windows, double *windows, double *result,
+typedef int one_way_weighted_covariate_method(const tsk_treeseq_t *self,
+    tsk_size_t num_weights, const double *weights, tsk_size_t num_covariates,
+    const double *covariates, tsk_size_t num_windows, const double *windows, double *result,
     tsk_flags_t options);
 
 static void
@@ -470,9 +470,9 @@ verify_one_way_weighted_covariate_func_errors(
     free(weights);
 }
 
-typedef int one_way_stat_method(tsk_treeseq_t *self, tsk_size_t num_sample_sets,
-    tsk_size_t *sample_set_sizes, tsk_id_t *sample_sets, tsk_size_t num_windows,
-    double *windows, double *result, tsk_flags_t options);
+typedef int one_way_stat_method(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
+    const tsk_size_t *sample_set_sizes, const tsk_id_t *sample_sets, tsk_size_t num_windows,
+    const double *windows, double *result, tsk_flags_t options);
 
 static void
 verify_one_way_stat_func_errors(tsk_treeseq_t *ts, one_way_stat_method *method)
@@ -522,9 +522,9 @@ verify_one_way_stat_func_errors(tsk_treeseq_t *ts, one_way_stat_method *method)
     CU_ASSERT_EQUAL_FATAL(ret, TSK_ERR_BAD_WINDOWS);
 }
 
-typedef int general_sample_stat_method(tsk_treeseq_t *self, tsk_size_t num_sample_sets,
-    tsk_size_t *sample_set_sizes, tsk_id_t *sample_sets, tsk_size_t num_indexes,
-    tsk_id_t *indexes, tsk_size_t num_windows, double *windows, double *result,
+typedef int general_sample_stat_method(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
+    const tsk_size_t *sample_set_sizes, const tsk_id_t *sample_sets, tsk_size_t num_indexes,
+    const tsk_id_t *indexes, tsk_size_t num_windows, const double *windows, double *result,
     tsk_flags_t options);
 
 static void
