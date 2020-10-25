@@ -119,7 +119,7 @@ typedef struct {
     /**
      * @brief The parent tree sequence.
      */
-    tsk_treeseq_t *tree_sequence;
+    const tsk_treeseq_t *tree_sequence;
     /**
      * @brief The leftmost root in the tree. Roots are siblings, and
      * other roots can be found using right_sib.
@@ -154,7 +154,7 @@ typedef struct {
     tsk_size_t num_nodes;
     tsk_flags_t options;
     tsk_size_t root_threshold;
-    tsk_id_t *samples;
+    const tsk_id_t *samples;
     /* TODO before documenting this should be change to interval. */
     /* Left and right physical coordinates of the tree */
     double left;
@@ -179,7 +179,7 @@ typedef struct {
     tsk_id_t *right_sample;
     tsk_id_t *next_sample;
     /* The sites on this tree */
-    tsk_site_t *sites;
+    const tsk_site_t *sites;
     tsk_size_t sites_length;
     /* Counters needed for next() and prev() transformations. */
     int direction;
@@ -252,7 +252,7 @@ tsk_size_t tsk_treeseq_get_metadata_schema_length(const tsk_treeseq_t *self);
 const char *tsk_treeseq_get_file_uuid(const tsk_treeseq_t *self);
 double tsk_treeseq_get_sequence_length(const tsk_treeseq_t *self);
 const double *tsk_treeseq_get_breakpoints(const tsk_treeseq_t *self);
-tsk_id_t *tsk_treeseq_get_samples(tsk_treeseq_t *self);
+const tsk_id_t *tsk_treeseq_get_samples(const tsk_treeseq_t *self);
 tsk_id_t *tsk_treeseq_get_sample_index_map(tsk_treeseq_t *self);
 bool tsk_treeseq_is_sample(const tsk_treeseq_t *self, tsk_id_t u);
 
@@ -281,9 +281,9 @@ int tsk_treeseq_kc_distance(
  * Keep them here for now until we figure out the correct interface.
  */
 int tsk_treeseq_genealogical_nearest_neighbours(const tsk_treeseq_t *self, const tsk_id_t *focal,
-    size_t num_focal, tsk_id_t *const*reference_sets, const size_t *reference_set_size,
+    size_t num_focal, const tsk_id_t *const*reference_sets, const size_t *reference_set_size,
     size_t num_reference_sets, tsk_flags_t options, double *ret_array);
-int tsk_treeseq_mean_descendants(const tsk_treeseq_t *self, tsk_id_t *const*reference_sets,
+int tsk_treeseq_mean_descendants(const tsk_treeseq_t *self, const tsk_id_t *const*reference_sets,
     const size_t *reference_set_size, size_t num_reference_sets, tsk_flags_t options,
     double *ret_array);
 
@@ -360,7 +360,7 @@ int tsk_treeseq_f4(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
 @{
 */
 
-int tsk_tree_init(tsk_tree_t *self, tsk_treeseq_t *tree_sequence, tsk_flags_t options);
+int tsk_tree_init(tsk_tree_t *self, const tsk_treeseq_t *tree_sequence, tsk_flags_t options);
 int tsk_tree_free(tsk_tree_t *self);
 
 tsk_id_t tsk_tree_get_index(const tsk_tree_t *self);
@@ -385,9 +385,9 @@ bool tsk_tree_equals(const tsk_tree_t *self, const tsk_tree_t *other);
 bool tsk_tree_is_descendant(const tsk_tree_t *self, tsk_id_t u, tsk_id_t v);
 bool tsk_tree_is_sample(const tsk_tree_t *self, tsk_id_t u);
 
-int tsk_tree_copy(tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options);
+int tsk_tree_copy(const tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options);
 int tsk_tree_set_tracked_samples(
-    tsk_tree_t *self, size_t num_tracked_samples, tsk_id_t *tracked_samples);
+    tsk_tree_t *self, size_t num_tracked_samples, const tsk_id_t *tracked_samples);
 int tsk_tree_set_tracked_samples_from_sample_list(
     tsk_tree_t *self, tsk_tree_t *other, tsk_id_t node);
 
@@ -397,7 +397,7 @@ int tsk_tree_get_mrca(const tsk_tree_t *self, tsk_id_t u, tsk_id_t v, tsk_id_t *
 int tsk_tree_get_num_samples(const tsk_tree_t *self, tsk_id_t u, size_t *num_samples);
 int tsk_tree_get_num_tracked_samples(
     const tsk_tree_t *self, tsk_id_t u, size_t *num_tracked_samples);
-int tsk_tree_get_sites(tsk_tree_t *self, tsk_site_t **sites, tsk_size_t *sites_length);
+int tsk_tree_get_sites(const tsk_tree_t *self, const tsk_site_t **sites, tsk_size_t *sites_length);
 int tsk_tree_depth(const tsk_tree_t *self, tsk_id_t u, tsk_size_t *depth);
 
 typedef struct {

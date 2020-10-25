@@ -36,7 +36,7 @@ extern "C" {
 #define TSK_ISOLATED_NOT_MISSING (1 << 1)
 
 typedef struct {
-    tsk_site_t *site;
+    const tsk_site_t *site;
     const char **alleles;
     tsk_size_t *allele_lengths;
     tsk_size_t num_alleles;

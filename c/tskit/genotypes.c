@@ -516,7 +516,7 @@ tsk_vargen_update_site(tsk_vargen_t *self)
     tsk_size_t j, num_missing;
     int no_longer_missing;
     tsk_variant_t *var = &self->variant;
-    tsk_site_t *site = var->site;
+    const tsk_site_t *site = var->site;
     tsk_mutation_t mutation;
     bool genotypes16 = !!(self->options & TSK_16_BIT_GENOTYPES);
     bool impute_missing = !!(self->options & TSK_ISOLATED_NOT_MISSING);

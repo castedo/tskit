@@ -585,8 +585,8 @@ tsk_treeseq_get_breakpoints(const tsk_treeseq_t *self)
     return self->breakpoints;
 }
 
-tsk_id_t *
-tsk_treeseq_get_samples(tsk_treeseq_t *self)
+const tsk_id_t *
+tsk_treeseq_get_samples(const tsk_treeseq_t *self)
 {
     return self->samples;
 }
@@ -642,7 +642,7 @@ increment_nd_array_value(double *array, tsk_size_t n, const tsk_size_t *shape,
  * in diversity, divergence, etc. */
 int TSK_WARN_UNUSED
 tsk_treeseq_genealogical_nearest_neighbours(const tsk_treeseq_t *self, const tsk_id_t *focal,
-    size_t num_focal, tsk_id_t *const *reference_sets, const size_t *reference_set_size,
+    size_t num_focal, const tsk_id_t *const *reference_sets, const size_t *reference_set_size,
     size_t num_reference_sets, tsk_flags_t TSK_UNUSED(options), double *ret_array)
 {
     int ret = 0;
@@ -823,7 +823,7 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_treeseq_mean_descendants(const tsk_treeseq_t *self, tsk_id_t *const*reference_sets,
+tsk_treeseq_mean_descendants(const tsk_treeseq_t *self, const tsk_id_t *const*reference_sets,
     const size_t *reference_set_size, size_t num_reference_sets,
     tsk_flags_t TSK_UNUSED(options), double *ret_array)
 {
@@ -3129,7 +3129,7 @@ tsk_tree_clear(tsk_tree_t *self)
 }
 
 int TSK_WARN_UNUSED
-tsk_tree_init(tsk_tree_t *self, tsk_treeseq_t *tree_sequence, tsk_flags_t options)
+tsk_tree_init(tsk_tree_t *self, const tsk_treeseq_t *tree_sequence, tsk_flags_t options)
 {
     int ret = TSK_ERR_NO_MEMORY;
     tsk_size_t num_samples;
@@ -3255,7 +3255,7 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_tree_set_tracked_samples(
-    tsk_tree_t *self, size_t num_tracked_samples, tsk_id_t *tracked_samples)
+    tsk_tree_t *self, size_t num_tracked_samples, const tsk_id_t *tracked_samples)
 {
     int ret = TSK_ERR_GENERIC;
     size_t j;
@@ -3335,7 +3335,7 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_tree_copy(tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options)
+tsk_tree_copy(const tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options)
 {
     int ret = TSK_ERR_GENERIC;
     size_t N = self->num_nodes;
@@ -3615,7 +3615,7 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_tree_get_sites(tsk_tree_t *self, tsk_site_t **sites, tsk_size_t *sites_length)
+tsk_tree_get_sites(const tsk_tree_t *self, const tsk_site_t **sites, tsk_size_t *sites_length)
 {
     *sites = self->sites;
     *sites_length = self->sites_length;
@@ -4119,7 +4119,7 @@ int TSK_WARN_UNUSED
 tsk_tree_last(tsk_tree_t *self)
 {
     int ret = 1;
-    tsk_treeseq_t *ts = self->tree_sequence;
+    const tsk_treeseq_t *ts = self->tree_sequence;
     const tsk_table_collection_t *tables = ts->tables;
 
     self->left = 0;
@@ -4156,7 +4156,7 @@ int TSK_WARN_UNUSED
 tsk_tree_next(tsk_tree_t *self)
 {
     int ret = 0;
-    tsk_treeseq_t *ts = self->tree_sequence;
+    const tsk_treeseq_t *ts = self->tree_sequence;
     const tsk_table_collection_t *tables = ts->tables;
     tsk_id_t num_trees = (tsk_id_t) tsk_treeseq_get_num_trees(ts);
 
@@ -4568,7 +4568,7 @@ kc_vectors_free(kc_vectors *self)
 
 static inline void
 update_kc_vectors_single_sample(
-    tsk_treeseq_t *ts, kc_vectors *kc_vecs, tsk_id_t u, double time)
+    const tsk_treeseq_t *ts, kc_vectors *kc_vecs, tsk_id_t u, double time)
 {
     const tsk_id_t *sample_index_map = ts->sample_index_map;
     tsk_id_t u_index = sample_index_map[u];
@@ -4578,7 +4578,7 @@ update_kc_vectors_single_sample(
 }
 
 static inline void
-update_kc_vectors_all_pairs(tsk_tree_t *tree, kc_vectors *kc_vecs, tsk_id_t u,
+update_kc_vectors_all_pairs(const tsk_tree_t *tree, kc_vectors *kc_vecs, tsk_id_t u,
     tsk_id_t v, tsk_size_t depth, double time)
 {
     tsk_id_t sample1_index, sample2_index, n1, n2, tmp, pair_index;
@@ -4633,7 +4633,7 @@ fill_kc_vectors(tsk_tree_t *t, kc_vectors *kc_vecs)
     struct kc_stack_elmt *stack;
     tsk_id_t root, u, c1, c2;
     int ret = 0;
-    tsk_treeseq_t *ts = t->tree_sequence;
+    const tsk_treeseq_t *ts = t->tree_sequence;
 
     stack = malloc(t->num_nodes * sizeof(*stack));
     if (stack == NULL) {
@@ -4722,7 +4722,7 @@ out:
 }
 
 static int
-check_kc_distance_samples_inputs(tsk_treeseq_t *self, tsk_treeseq_t *other)
+check_kc_distance_samples_inputs(const tsk_treeseq_t *self, const tsk_treeseq_t *other)
 {
     const tsk_id_t *samples, *other_samples;
     tsk_id_t i, n;
@@ -4809,7 +4809,7 @@ out:
 }
 
 static void
-update_kc_pair_with_sample(tsk_tree_t *self, kc_vectors *kc, tsk_id_t sample,
+update_kc_pair_with_sample(const tsk_tree_t *self, kc_vectors *kc, tsk_id_t sample,
     tsk_size_t *depths, double root_time)
 {
     tsk_id_t c, p, sib;
