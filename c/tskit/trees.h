@@ -204,7 +204,7 @@ typedef struct {
     tsk_size_t num_nodes;
     tsk_size_t num_edges;
     double tree_left;
-    tsk_treeseq_t *tree_sequence;
+    const tsk_treeseq_t *tree_sequence;
     tsk_id_t insertion_index;
     tsk_id_t removal_index;
     tsk_id_t tree_index;
@@ -275,7 +275,7 @@ int tsk_treeseq_simplify(const tsk_treeseq_t *self, const tsk_id_t *samples,
     tsk_id_t *node_map);
 
 int tsk_treeseq_kc_distance(
-    tsk_treeseq_t *self, tsk_treeseq_t *other, double lambda_, double *result);
+    const tsk_treeseq_t *self, const tsk_treeseq_t *other, double lambda_, double *result);
 
 int tsk_treeseq_genealogical_nearest_neighbours(const tsk_treeseq_t *self,
     const tsk_id_t *focal, size_t num_focal, const tsk_id_t *const *reference_sets,
@@ -435,18 +435,18 @@ int tsk_tree_map_mutations(tsk_tree_t *self, int8_t *genotypes, double *cost_mat
     tsk_state_transition_t **transitions);
 
 int tsk_tree_kc_distance(
-    tsk_tree_t *self, tsk_tree_t *other, double lambda, double *result);
+    const tsk_tree_t *self, const tsk_tree_t *other, double lambda, double *result);
 
 /****************************************************************************/
 /* Diff iterator */
 /****************************************************************************/
 
 int tsk_diff_iter_init(
-    tsk_diff_iter_t *self, tsk_treeseq_t *tree_sequence, tsk_flags_t options);
+    tsk_diff_iter_t *self, const tsk_treeseq_t *tree_sequence, tsk_flags_t options);
 int tsk_diff_iter_free(tsk_diff_iter_t *self);
 int tsk_diff_iter_next(tsk_diff_iter_t *self, double *left, double *right,
     tsk_edge_list_t *edges_out, tsk_edge_list_t *edges_in);
-void tsk_diff_iter_print_state(tsk_diff_iter_t *self, FILE *out);
+void tsk_diff_iter_print_state(const tsk_diff_iter_t *self, FILE *out);
 
 #ifdef __cplusplus
 }

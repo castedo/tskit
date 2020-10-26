@@ -4393,7 +4393,7 @@ out:
 
 int TSK_WARN_UNUSED
 tsk_diff_iter_init(
-    tsk_diff_iter_t *self, tsk_treeseq_t *tree_sequence, tsk_flags_t options)
+    tsk_diff_iter_t *self, const tsk_treeseq_t *tree_sequence, tsk_flags_t options)
 {
     int ret = 0;
 
@@ -4427,7 +4427,7 @@ tsk_diff_iter_free(tsk_diff_iter_t *self)
 }
 
 void
-tsk_diff_iter_print_state(tsk_diff_iter_t *self, FILE *out)
+tsk_diff_iter_print_state(const tsk_diff_iter_t *self, FILE *out)
 {
     fprintf(out, "tree_diff_iterator state\n");
     fprintf(out, "num_edges = %d\n", (int) self->num_edges);
@@ -4447,7 +4447,7 @@ tsk_diff_iter_next(tsk_diff_iter_t *self, double *ret_left, double *ret_right,
     double left = self->tree_left;
     double right = sequence_length;
     tsk_size_t next_edge_list_node = 0;
-    tsk_treeseq_t *s = self->tree_sequence;
+    const tsk_treeseq_t *s = self->tree_sequence;
     tsk_edge_list_node_t *out_head = NULL;
     tsk_edge_list_node_t *out_tail = NULL;
     tsk_edge_list_node_t *in_head = NULL;
@@ -4636,7 +4636,7 @@ struct kc_stack_elmt {
 };
 
 static int
-fill_kc_vectors(tsk_tree_t *t, kc_vectors *kc_vecs)
+fill_kc_vectors(const tsk_tree_t *t, kc_vectors *kc_vecs)
 {
     int stack_top;
     tsk_size_t depth;
@@ -4707,7 +4707,7 @@ norm_kc_vectors(kc_vectors *self, kc_vectors *other, double lambda)
 }
 
 static int
-check_kc_distance_tree_inputs(tsk_tree_t *self)
+check_kc_distance_tree_inputs(const tsk_tree_t *self)
 {
     tsk_id_t u, num_nodes, left_child;
     int ret = 0;
@@ -4759,11 +4759,11 @@ out:
 }
 
 int
-tsk_tree_kc_distance(tsk_tree_t *self, tsk_tree_t *other, double lambda, double *result)
+tsk_tree_kc_distance(const tsk_tree_t *self, const tsk_tree_t *other, double lambda, double *result)
 {
     tsk_id_t n, i;
     kc_vectors vecs[2];
-    tsk_tree_t *trees[2] = { self, other };
+    const tsk_tree_t *trees[2] = { self, other };
     int ret = 0;
 
     for (i = 0; i < 2; i++) {
@@ -4802,7 +4802,7 @@ out:
 }
 
 static int
-check_kc_distance_tree_sequence_inputs(tsk_treeseq_t *self, tsk_treeseq_t *other)
+check_kc_distance_tree_sequence_inputs(const tsk_treeseq_t *self, const tsk_treeseq_t *other)
 {
     int ret = 0;
 
@@ -4932,13 +4932,13 @@ out:
 
 int
 tsk_treeseq_kc_distance(
-    tsk_treeseq_t *self, tsk_treeseq_t *other, double lambda_, double *result)
+    const tsk_treeseq_t *self, const tsk_treeseq_t *other, double lambda_, double *result)
 {
     int i;
     tsk_id_t n;
     tsk_size_t num_nodes;
     double left, span, total;
-    tsk_treeseq_t *treeseqs[2] = { self, other };
+    const tsk_treeseq_t *treeseqs[2] = { self, other };
     tsk_tree_t trees[2];
     kc_vectors kcs[2];
     tsk_diff_iter_t diff_iters[2];
