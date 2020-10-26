@@ -253,7 +253,7 @@ const char *tsk_treeseq_get_file_uuid(const tsk_treeseq_t *self);
 double tsk_treeseq_get_sequence_length(const tsk_treeseq_t *self);
 const double *tsk_treeseq_get_breakpoints(const tsk_treeseq_t *self);
 const tsk_id_t *tsk_treeseq_get_samples(const tsk_treeseq_t *self);
-tsk_id_t *tsk_treeseq_get_sample_index_map(tsk_treeseq_t *self);
+const tsk_id_t *tsk_treeseq_get_sample_index_map(const tsk_treeseq_t *self);
 bool tsk_treeseq_is_sample(const tsk_treeseq_t *self, tsk_id_t u);
 
 int tsk_treeseq_get_node(const tsk_treeseq_t *self, tsk_id_t index, tsk_node_t *node);
@@ -274,8 +274,8 @@ int tsk_treeseq_simplify(const tsk_treeseq_t *self, const tsk_id_t *samples,
     tsk_size_t num_samples, tsk_flags_t options, tsk_treeseq_t *output,
     tsk_id_t *node_map);
 
-int tsk_treeseq_kc_distance(
-    const tsk_treeseq_t *self, const tsk_treeseq_t *other, double lambda_, double *result);
+int tsk_treeseq_kc_distance(const tsk_treeseq_t *self, const tsk_treeseq_t *other,
+    double lambda_, double *result);
 
 int tsk_treeseq_genealogical_nearest_neighbours(const tsk_treeseq_t *self,
     const tsk_id_t *focal, size_t num_focal, const tsk_id_t *const *reference_sets,

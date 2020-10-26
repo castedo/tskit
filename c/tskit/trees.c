@@ -591,8 +591,8 @@ tsk_treeseq_get_samples(const tsk_treeseq_t *self)
     return self->samples;
 }
 
-tsk_id_t *
-tsk_treeseq_get_sample_index_map(tsk_treeseq_t *self)
+const tsk_id_t *
+tsk_treeseq_get_sample_index_map(const tsk_treeseq_t *self)
 {
     return self->sample_index_map;
 }
@@ -4759,7 +4759,8 @@ out:
 }
 
 int
-tsk_tree_kc_distance(const tsk_tree_t *self, const tsk_tree_t *other, double lambda, double *result)
+tsk_tree_kc_distance(
+    const tsk_tree_t *self, const tsk_tree_t *other, double lambda, double *result)
 {
     tsk_id_t n, i;
     kc_vectors vecs[2];
@@ -4802,7 +4803,8 @@ out:
 }
 
 static int
-check_kc_distance_tree_sequence_inputs(const tsk_treeseq_t *self, const tsk_treeseq_t *other)
+check_kc_distance_tree_sequence_inputs(
+    const tsk_treeseq_t *self, const tsk_treeseq_t *other)
 {
     int ret = 0;
 
@@ -4931,8 +4933,8 @@ out:
 }
 
 int
-tsk_treeseq_kc_distance(
-    const tsk_treeseq_t *self, const tsk_treeseq_t *other, double lambda_, double *result)
+tsk_treeseq_kc_distance(const tsk_treeseq_t *self, const tsk_treeseq_t *other,
+    double lambda_, double *result)
 {
     int i;
     tsk_id_t n;
