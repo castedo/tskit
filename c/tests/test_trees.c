@@ -474,8 +474,8 @@ verify_tree_diffs(tsk_treeseq_t *ts, tsk_flags_t options)
 /* When we keep all sites in simplify, the genotypes for the subset of the
  * samples should be the same as the original */
 static void
-verify_simplify_genotypes(
-    tsk_treeseq_t *ts, tsk_treeseq_t *subset, const tsk_id_t *samples, size_t num_samples)
+verify_simplify_genotypes(tsk_treeseq_t *ts, tsk_treeseq_t *subset,
+    const tsk_id_t *samples, size_t num_samples)
 {
     int ret;
     size_t m = tsk_treeseq_get_num_sites(ts);
@@ -529,8 +529,8 @@ verify_simplify_genotypes(
 }
 
 static void
-verify_simplify_properties(tsk_treeseq_t *ts, tsk_treeseq_t *subset, const tsk_id_t *samples,
-    size_t num_samples, tsk_id_t *node_map)
+verify_simplify_properties(tsk_treeseq_t *ts, tsk_treeseq_t *subset,
+    const tsk_id_t *samples, size_t num_samples, tsk_id_t *node_map)
 {
     int ret;
     tsk_node_t n1, n2;

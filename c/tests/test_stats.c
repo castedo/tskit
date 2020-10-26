@@ -256,14 +256,15 @@ static void
 verify_mean_descendants(tsk_treeseq_t *ts)
 {
     int ret;
-    const tsk_id_t *samples;
+    tsk_id_t *samples;
     const tsk_id_t *sample_sets[2];
     size_t sample_set_size[2];
     size_t num_samples = tsk_treeseq_get_num_samples(ts);
     double *C = malloc(2 * tsk_treeseq_get_num_nodes(ts) * sizeof(double));
     CU_ASSERT_FATAL(C != NULL);
 
-    samples = tsk_treeseq_get_samples(ts);
+    samples = malloc(num_samples * sizeof(*samples));
+    memcpy(samples, tsk_treeseq_get_samples(ts), num_samples * sizeof(*samples));
 
     sample_sets[0] = samples;
     sample_set_size[0] = num_samples / 2;
@@ -276,15 +277,14 @@ verify_mean_descendants(tsk_treeseq_t *ts)
     /* Check some error conditions */
     ret = tsk_treeseq_mean_descendants(ts, sample_sets, sample_set_size, 0, 0, C);
     CU_ASSERT_EQUAL_FATAL(ret, TSK_ERR_BAD_PARAM_VALUE);
-/*
     samples[0] = -1;
     ret = tsk_treeseq_mean_descendants(ts, sample_sets, sample_set_size, 2, 0, C);
     CU_ASSERT_EQUAL_FATAL(ret, TSK_ERR_NODE_OUT_OF_BOUNDS);
     samples[0] = (tsk_id_t) tsk_treeseq_get_num_nodes(ts) + 1;
     ret = tsk_treeseq_mean_descendants(ts, sample_sets, sample_set_size, 2, 0, C);
     CU_ASSERT_EQUAL_FATAL(ret, TSK_ERR_NODE_OUT_OF_BOUNDS);
-*/
 
+    free(samples);
     free(C);
 }
 
