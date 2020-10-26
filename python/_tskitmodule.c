@@ -6429,10 +6429,6 @@ out:
     return ret;
 }
 
-typedef int one_way_weighted_method(const tsk_treeseq_t *self, tsk_size_t num_weights,
-    const double *weights, tsk_size_t num_windows, const double *windows, double *result,
-    tsk_flags_t options);
-
 static PyObject *
 TreeSequence_one_way_weighted_method(
     TreeSequence *self, PyObject *args, PyObject *kwds, one_way_weighted_method *method)
@@ -6505,10 +6501,6 @@ out:
     Py_XDECREF(result_array);
     return ret;
 }
-
-typedef int one_way_covariates_method(const tsk_treeseq_t *self, tsk_size_t num_weights,
-    const double *weights, tsk_size_t num_covariates, const double *covariates,
-    tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
 
 static PyObject *
 TreeSequence_one_way_covariates_method(TreeSequence *self, PyObject *args,
@@ -6598,11 +6590,6 @@ out:
     Py_XDECREF(result_array);
     return ret;
 }
-
-typedef int one_way_sample_stat_method(const tsk_treeseq_t *self,
-    tsk_size_t num_sample_sets, const tsk_size_t *sample_set_sizes,
-    const tsk_id_t *sample_sets, tsk_size_t num_windows, const double *windows,
-    double *result, tsk_flags_t options);
 
 static PyObject *
 TreeSequence_one_way_stat_method(TreeSequence *self, PyObject *args, PyObject *kwds,
@@ -6791,11 +6778,6 @@ TreeSequence_Y1(TreeSequence *self, PyObject *args, PyObject *kwds)
 {
     return TreeSequence_one_way_stat_method(self, args, kwds, tsk_treeseq_Y1);
 }
-
-typedef int general_sample_stat_method(const tsk_treeseq_t *self,
-    tsk_size_t num_sample_sets, const tsk_size_t *sample_set_sizes,
-    const tsk_id_t *sample_sets, tsk_size_t num_indexes, const tsk_id_t *indexes,
-    tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
 
 static PyObject *
 TreeSequence_k_way_stat_method(TreeSequence *self, PyObject *args, PyObject *kwds,

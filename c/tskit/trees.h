@@ -277,9 +277,6 @@ int tsk_treeseq_simplify(const tsk_treeseq_t *self, const tsk_id_t *samples,
 int tsk_treeseq_kc_distance(
     tsk_treeseq_t *self, tsk_treeseq_t *other, double lambda_, double *result);
 
-/* TODO do these belong in trees or stats? They should probably be in stats.
- * Keep them here for now until we figure out the correct interface.
- */
 int tsk_treeseq_genealogical_nearest_neighbours(const tsk_treeseq_t *self,
     const tsk_id_t *focal, size_t num_focal, tsk_id_t *const *reference_sets,
     const size_t *reference_set_size, size_t num_reference_sets, tsk_flags_t options,
@@ -297,18 +294,35 @@ int tsk_treeseq_general_stat(const tsk_treeseq_t *self, size_t K, const double *
     const double *windows, double *sigma, tsk_flags_t options);
 
 /* One way weighted stats */
+
+typedef int one_way_weighted_method(const tsk_treeseq_t *self, tsk_size_t num_weights,
+    const double *weights, tsk_size_t num_windows, const double *windows, double *result,
+    tsk_flags_t options);
+
 int tsk_treeseq_trait_covariance(const tsk_treeseq_t *self, tsk_size_t num_weights,
     const double *weights, tsk_size_t num_windows, const double *windows, double *result,
     tsk_flags_t options);
 int tsk_treeseq_trait_correlation(const tsk_treeseq_t *self, tsk_size_t num_weights,
     const double *weights, tsk_size_t num_windows, const double *windows, double *result,
     tsk_flags_t options);
+
 /* One way weighted stats with covariates */
+
+typedef int one_way_covariates_method(const tsk_treeseq_t *self, tsk_size_t num_weights,
+    const double *weights, tsk_size_t num_covariates, const double *covariates,
+    tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
+
 int tsk_treeseq_trait_regression(const tsk_treeseq_t *self, tsk_size_t num_weights,
     const double *weights, tsk_size_t num_covariates, const double *covariates,
     tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
 
 /* One way sample set stats */
+
+typedef int one_way_sample_stat_method(const tsk_treeseq_t *self,
+    tsk_size_t num_sample_sets, const tsk_size_t *sample_set_sizes,
+    const tsk_id_t *sample_sets, tsk_size_t num_windows, const double *windows,
+    double *result, tsk_flags_t options);
+
 int tsk_treeseq_diversity(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
     const tsk_size_t *sample_set_sizes, const tsk_id_t *sample_sets,
     tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
@@ -324,6 +338,12 @@ int tsk_treeseq_allele_frequency_spectrum(const tsk_treeseq_t *self,
     double *result, tsk_flags_t options);
 
 /* Two way sample set stats */
+
+typedef int general_sample_stat_method(const tsk_treeseq_t *self,
+    tsk_size_t num_sample_sets, const tsk_size_t *sample_set_sizes,
+    const tsk_id_t *sample_sets, tsk_size_t num_indexes, const tsk_id_t *indexes,
+    tsk_size_t num_windows, const double *windows, double *result, tsk_flags_t options);
+
 int tsk_treeseq_divergence(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
     const tsk_size_t *sample_set_sizes, const tsk_id_t *sample_sets,
     tsk_size_t num_index_tuples, const tsk_id_t *index_tuples, tsk_size_t num_windows,
