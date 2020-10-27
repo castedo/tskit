@@ -896,7 +896,8 @@ out:
 }
 
 static int
-tsk_ls_hmm_process_site(tsk_ls_hmm_t *self, const tsk_site_t *site, int8_t haplotype_state)
+tsk_ls_hmm_process_site(
+    tsk_ls_hmm_t *self, const tsk_site_t *site, int8_t haplotype_state)
 {
     int ret = 0;
     double x, normalisation_factor;
