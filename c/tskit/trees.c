@@ -3328,7 +3328,7 @@ out:
 }
 
 int TSK_WARN_UNUSED
-tsk_tree_copy(tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options)
+tsk_tree_copy(const tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options)
 {
     int ret = TSK_ERR_GENERIC;
     size_t N = self->num_nodes;

@@ -385,7 +385,7 @@ bool tsk_tree_equals(const tsk_tree_t *self, const tsk_tree_t *other);
 bool tsk_tree_is_descendant(const tsk_tree_t *self, tsk_id_t u, tsk_id_t v);
 bool tsk_tree_is_sample(const tsk_tree_t *self, tsk_id_t u);
 
-int tsk_tree_copy(tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options);
+int tsk_tree_copy(const tsk_tree_t *self, tsk_tree_t *dest, tsk_flags_t options);
 int tsk_tree_set_tracked_samples(
     tsk_tree_t *self, size_t num_tracked_samples, tsk_id_t *tracked_samples);
 int tsk_tree_set_tracked_samples_from_sample_list(
