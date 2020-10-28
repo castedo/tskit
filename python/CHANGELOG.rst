@@ -4,6 +4,9 @@
 
 **Features**
 
+- Added ``Tree.generate_star`` static method to create star-topologies (:user:`hyanwong`,
+  :pr:`934`).
+
 - Added ``equals`` method to TableCollection and each of the tables which
   provides more flexible equality comparisons, for example, allowing
   users to ignore metadata or provenance in the comparison.
@@ -12,6 +15,15 @@
 
 - ``ts.dump`` and ``tskit.load`` now support reading and writing file objects such as
   FIFOs and sockets. (:user:`benjeffery`, :issue:`657`, :pr:`909`)
+
+- Added ``tskit.write_ms`` for writing to MS format.
+  (:user:`saurabhbelsare`, :issue:`727`, :pr:`854`)
+
+- Added ``TableCollection.indexes`` for access to the edge insertion/removal order indexes.
+  (:user:`benjeffery`, :issue:`4`, :pr:`916`)
+
+- Added ``TreeSequence._repr_html_`` for use in jupyter notebooks.
+  (:user:`benjeffery`, :issue:`872`, :pr:`923`)
 
 **Breaking changes**
 
