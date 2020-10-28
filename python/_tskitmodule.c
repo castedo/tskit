@@ -248,7 +248,7 @@ convert_node_id_list(tsk_id_t *children, size_t num_children)
     for (j = 0; j < num_children; j++) {
         py_int = Py_BuildValue("i", (int) children[j]);
         if (py_int == NULL) {
-            Py_DECREF(children);
+            Py_DECREF(t);
             goto out;
         }
         PyTuple_SET_ITEM(t, j, py_int);
@@ -859,18 +859,27 @@ out:
 static PyTypeObject IndividualTableType;
 
 static PyObject *
-IndividualTable_equals(IndividualTable *self, PyObject *args)
+IndividualTable_equals(IndividualTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     IndividualTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (IndividualTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|i", kwlist, &IndividualTableType,
+            &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &IndividualTableType, &other)) {
+    if (IndividualTable_check_state(self) != 0
+        || IndividualTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_individual_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_individual_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -1168,7 +1177,7 @@ static PyMethodDef IndividualTable_methods[] = {
         .ml_doc = "Returns the kth row in this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) IndividualTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns true if the specified individual table is equal." },
     { .ml_name = "append_columns",
         .ml_meth = (PyCFunction) IndividualTable_append_columns,
@@ -1315,18 +1324,25 @@ out:
 static PyTypeObject NodeTableType;
 
 static PyObject *
-NodeTable_equals(NodeTable *self, PyObject *args)
+NodeTable_equals(NodeTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     NodeTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (NodeTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwds, "O!|i", kwlist, &NodeTableType, &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &NodeTableType, &other)) {
+    if (NodeTable_check_state(self) != 0 || NodeTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_node_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue("i", tsk_node_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -1633,7 +1649,7 @@ static PyMethodDef NodeTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) NodeTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns True if the specified NodeTable is equal to this one." },
     { .ml_name = "get_row",
         .ml_meth = (PyCFunction) NodeTable_get_row,
@@ -1781,18 +1797,25 @@ out:
 static PyTypeObject EdgeTableType;
 
 static PyObject *
-EdgeTable_equals(EdgeTable *self, PyObject *args)
+EdgeTable_equals(EdgeTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     EdgeTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (EdgeTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwds, "O!|i", kwlist, &EdgeTableType, &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &EdgeTableType, &other)) {
+    if (EdgeTable_check_state(self) != 0 || EdgeTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_edge_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue("i", tsk_edge_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -2116,7 +2139,7 @@ static PyMethodDef EdgeTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) EdgeTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns True if the specified EdgeTable is equal to this one." },
     { .ml_name = "get_row",
         .ml_meth = (PyCFunction) EdgeTable_get_row,
@@ -2267,18 +2290,27 @@ out:
 static PyTypeObject MigrationTableType;
 
 static PyObject *
-MigrationTable_equals(MigrationTable *self, PyObject *args)
+MigrationTable_equals(MigrationTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     MigrationTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (MigrationTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwds, "O!|i", kwlist, &MigrationTableType, &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &MigrationTableType, &other)) {
+    if (MigrationTable_check_state(self) != 0
+        || MigrationTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_migration_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_migration_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -2615,7 +2647,7 @@ static PyMethodDef MigrationTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) MigrationTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns True if the specified MigrationTable is equal to this one." },
     { .ml_name = "get_row",
         .ml_meth = (PyCFunction) MigrationTable_get_row,
@@ -2762,18 +2794,25 @@ out:
 static PyTypeObject SiteTableType;
 
 static PyObject *
-SiteTable_equals(SiteTable *self, PyObject *args)
+SiteTable_equals(SiteTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     SiteTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (SiteTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwds, "O!|i", kwlist, &SiteTableType, &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &SiteTableType, &other)) {
+    if (SiteTable_check_state(self) != 0 || SiteTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_site_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue("i", tsk_site_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -3067,7 +3106,7 @@ static PyMethodDef SiteTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) SiteTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns True if the specified SiteTable is equal to this one." },
     { .ml_name = "get_row",
         .ml_meth = (PyCFunction) SiteTable_get_row,
@@ -3219,18 +3258,26 @@ out:
 static PyTypeObject MutationTableType;
 
 static PyObject *
-MutationTable_equals(MutationTable *self, PyObject *args)
+MutationTable_equals(MutationTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     MutationTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (MutationTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwds, "O!|i", kwlist, &MutationTableType, &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &MutationTableType, &other)) {
+    if (MutationTable_check_state(self) != 0 || MutationTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_mutation_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_mutation_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -3569,7 +3616,7 @@ static PyMethodDef MutationTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) MutationTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc = "Returns True if the specified MutationTable is equal to this one." },
     { .ml_name = "get_row",
         .ml_meth = (PyCFunction) MutationTable_get_row,
@@ -3713,18 +3760,27 @@ out:
 static PyTypeObject PopulationTableType;
 
 static PyObject *
-PopulationTable_equals(PopulationTable *self, PyObject *args)
+PopulationTable_equals(PopulationTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     PopulationTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_metadata = false;
+    static char *kwlist[] = { "other", "ignore_metadata", NULL };
 
-    if (PopulationTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|i", kwlist, &PopulationTableType,
+            &other, &ignore_metadata)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &PopulationTableType, &other)) {
+    if (PopulationTable_check_state(self) != 0
+        || PopulationTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_population_table_equals(self->table, other->table));
+    if (ignore_metadata) {
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_population_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -3967,7 +4023,7 @@ static PyMethodDef PopulationTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) PopulationTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc
         = "Returns True if the specified PopulationTable is equal to this one." },
     { .ml_name = "get_row",
@@ -4109,18 +4165,27 @@ out:
 static PyTypeObject ProvenanceTableType;
 
 static PyObject *
-ProvenanceTable_equals(ProvenanceTable *self, PyObject *args)
+ProvenanceTable_equals(ProvenanceTable *self, PyObject *args, PyObject *kwds)
 {
     PyObject *ret = NULL;
     ProvenanceTable *other = NULL;
+    tsk_flags_t options = 0;
+    int ignore_timestamps = false;
+    static char *kwlist[] = { "other", "ignore_timestamps", NULL };
 
-    if (ProvenanceTable_check_state(self) != 0) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|i", kwlist, &ProvenanceTableType,
+            &other, &ignore_timestamps)) {
         goto out;
     }
-    if (!PyArg_ParseTuple(args, "O!", &ProvenanceTableType, &other)) {
+    if (ProvenanceTable_check_state(self) != 0
+        || ProvenanceTable_check_state(other) != 0) {
         goto out;
     }
-    ret = Py_BuildValue("i", tsk_provenance_table_equals(self->table, other->table));
+    if (ignore_timestamps) {
+        options |= TSK_CMP_IGNORE_TIMESTAMPS;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_provenance_table_equals(self->table, other->table, options));
 out:
     return ret;
 }
@@ -4353,7 +4418,7 @@ static PyMethodDef ProvenanceTable_methods[] = {
         .ml_doc = "Adds a new row to this table." },
     { .ml_name = "equals",
         .ml_meth = (PyCFunction) ProvenanceTable_equals,
-        .ml_flags = METH_VARARGS,
+        .ml_flags = METH_VARARGS | METH_KEYWORDS,
         .ml_doc
         = "Returns True if the specified ProvenanceTable is equal to this one." },
     { .ml_name = "get_row",
@@ -4398,6 +4463,17 @@ static PyTypeObject ProvenanceTableType = {
  * TableCollection
  *===================================================================
  */
+
+static int
+TableCollection_check_state(TableCollection *self)
+{
+    int ret = 0;
+    if (self->tables == NULL) {
+        PyErr_SetString(PyExc_SystemError, "TableCollection not initialised");
+        ret = -1;
+    }
+    return ret;
+}
 
 static void
 TableCollection_dealloc(TableCollection *self)
@@ -5139,6 +5215,66 @@ out:
 }
 
 static PyObject *
+TableCollection_get_indexes(TableCollection *self, void *closure)
+{
+    PyObject *ret = NULL;
+    PyObject *indexes_dict = NULL;
+    PyObject *insertion = NULL;
+    PyObject *removal = NULL;
+
+    if (TableCollection_check_state(self) != 0) {
+        goto out;
+    }
+
+    insertion = table_get_column_array(self->tables->indexes.num_edges,
+        self->tables->indexes.edge_insertion_order, NPY_INT32, sizeof(tsk_id_t));
+    if (insertion == NULL) {
+        goto out;
+    }
+    removal = table_get_column_array(self->tables->indexes.num_edges,
+        self->tables->indexes.edge_removal_order, NPY_INT32, sizeof(tsk_id_t));
+    if (removal == NULL) {
+        goto out;
+    }
+    indexes_dict = PyDict_New();
+    if (indexes_dict == NULL) {
+        goto out;
+    }
+    if (PyDict_SetItemString(indexes_dict, "edge_insertion_order", insertion) != 0) {
+        goto out;
+    }
+    if (PyDict_SetItemString(indexes_dict, "edge_removal_order", removal) != 0) {
+        goto out;
+    }
+    ret = indexes_dict;
+    indexes_dict = NULL;
+out:
+    Py_XDECREF(indexes_dict);
+    Py_XDECREF(insertion);
+    Py_XDECREF(removal);
+    return ret;
+}
+
+static int
+TableCollection_set_indexes(TableCollection *self, PyObject *arg, void *closure)
+{
+    int err;
+    int ret = -1;
+
+    if (TableCollection_check_state(self) != 0) {
+        goto out;
+    }
+
+    err = parse_indexes_dict(self->tables, arg);
+    if (err != 0) {
+        goto out;
+    }
+    ret = 0;
+out:
+    return ret;
+}
+
+static PyObject *
 TableCollection_has_index(TableCollection *self)
 {
     bool has_index = tsk_table_collection_has_index(self->tables, 0);
@@ -5152,22 +5288,35 @@ TableCollection_equals(TableCollection *self, PyObject *args, PyObject *kwds)
     TableCollection *other = NULL;
     tsk_flags_t options = 0;
     int ignore_metadata = false;
+    int ignore_ts_metadata = false;
     int ignore_provenance = false;
-    static char *kwlist[]
-        = { "other", "ignore_top_level_metadata", "ignore_provenance", NULL };
+    int ignore_timestamps = true;
+    static char *kwlist[] = { "other", "ignore_metadata", "ignore_ts_metadata",
+        "ignore_provenance", "ignore_timestamps", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|ii", kwlist, &TableCollectionType,
-            &other, &ignore_metadata, &ignore_provenance)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!|iiii", kwlist, &TableCollectionType,
+            &other, &ignore_metadata, &ignore_ts_metadata, &ignore_provenance,
+            &ignore_timestamps)) {
         goto out;
     }
     if (ignore_metadata) {
-        options |= TSK_IGNORE_TOP_LEVEL_METADATA;
+        options |= TSK_CMP_IGNORE_METADATA;
+    }
+    if (ignore_ts_metadata) {
+        options |= TSK_CMP_IGNORE_TS_METADATA;
     }
     if (ignore_provenance) {
-        options |= TSK_IGNORE_PROVENANCE;
+        options |= TSK_CMP_IGNORE_PROVENANCE;
     }
-    ret = Py_BuildValue("i",
-        tsk_table_collection_equals_with_options(self->tables, other->tables, options));
+    if (ignore_timestamps) {
+        options |= TSK_CMP_IGNORE_TIMESTAMPS;
+    }
+    if (TableCollection_check_state(self) != 0
+        || TableCollection_check_state(other) != 0) {
+        goto out;
+    }
+    ret = Py_BuildValue(
+        "i", tsk_table_collection_equals(self->tables, other->tables, options));
 out:
     return ret;
 }
@@ -5197,6 +5346,10 @@ static PyGetSetDef TableCollection_getsetters[] = {
     { .name = "provenances",
         .get = (getter) TableCollection_get_provenances,
         .doc = "The provenance table." },
+    { .name = "indexes",
+        .get = (getter) TableCollection_get_indexes,
+        .set = (setter) TableCollection_set_indexes,
+        .doc = "The indexes." },
     { .name = "sequence_length",
         .get = (getter) TableCollection_get_sequence_length,
         .set = (setter) TableCollection_set_sequence_length,
@@ -5384,17 +5537,20 @@ TreeSequence_load_tables(TreeSequence *self, PyObject *args, PyObject *kwds)
     int err;
     PyObject *ret = NULL;
     TableCollection *tables = NULL;
-    static char *kwlist[] = { "tables", NULL };
-    /* TODO add an interface to turn this on and off. */
-    tsk_flags_t options = TSK_BUILD_INDEXES;
+    static char *kwlist[] = { "tables", "build_indexes", NULL };
+    int build_indexes = false;
+    tsk_flags_t options = 0;
 
     if (!PyArg_ParseTupleAndKeywords(
-            args, kwds, "O!", kwlist, &TableCollectionType, &tables)) {
+            args, kwds, "O!|i", kwlist, &TableCollectionType, &tables, &build_indexes)) {
         goto out;
     }
     err = TreeSequence_alloc(self);
     if (err != 0) {
         goto out;
+    }
+    if (build_indexes) {
+        options |= TSK_BUILD_INDEXES;
     }
     err = tsk_treeseq_init(self->tree_sequence, tables->tables, options);
     if (err != 0) {

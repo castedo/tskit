@@ -1424,6 +1424,42 @@ class TestTreeSequence(HighLevelTestCase):
                         assert i == length - 1 - n.id
                     assert n.id == 0
 
+    def test_load_tables(self):
+        for ts in get_example_tree_sequences():
+            tables = ts.dump_tables()
+            tables.drop_index()
+
+            # Tables not in tc not rebuilt as per default, so error
+            with pytest.raises(
+                _tskit.LibraryError, match="^Table collection must be indexed$"
+            ):
+                assert tskit.TreeSequence.load_tables(tables).dump_tables().has_index()
+
+            # Tables not in tc, but rebuilt
+            assert (
+                tskit.TreeSequence.load_tables(tables, build_indexes=True)
+                .dump_tables()
+                .has_index()
+            )
+
+            tables.build_index()
+            # Tables in tc, not rebuilt
+            assert (
+                tskit.TreeSequence.load_tables(tables, build_indexes=False)
+                .dump_tables()
+                .has_index()
+            )
+            # Tables in tc, and rebuilt
+            assert tskit.TreeSequence.load_tables(tables).dump_tables().has_index()
+
+    def test_html_repr(self):
+        for ts in get_example_tree_sequences():
+            html = ts._repr_html_()
+            assert len(html) > 4300
+            assert f"<tr><td>Trees</td><td>{ts.num_trees}</td></tr>" in html
+            for table in ts.tables.name_map:
+                assert f"<td>{table.capitalize()}</td>" in html
+
 
 class TestTreeSequenceMethodSignatures:
     ts = msprime.simulate(10, random_seed=1234)
@@ -1443,6 +1479,8 @@ class TestTreeSequenceMethodSignatures:
             self.ts.simplify([], True)
         with pytest.raises(TypeError, match="argument"):
             self.ts.draw_svg("filename", True)
+        with pytest.raises(TypeError, match="argument"):
+            tskit.TreeSequence.load_tables(tskit.TableCollection(1), True)
 
     def test_trees_params(self):
         """

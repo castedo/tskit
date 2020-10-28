@@ -260,39 +260,42 @@ class TestFIFO:
 ADDRESS = ("localhost", 10009)
 
 
+class Server(socketserver.ThreadingTCPServer):
+    allow_reuse_address = True
+
+
+class StoreEchoHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        while True:
+            try:
+                ts = tskit.load(self.request.fileno())
+            except EOFError:
+                break
+            ts.dump(self.request.fileno())
+        self.server.shutdown()
+
+
+def server_process(q):
+    server = Server(ADDRESS, StoreEchoHandler)
+    # Tell the client (on the other end of the queue) that it's OK to open
+    # a connection
+    q.put(None)
+    server.serve_forever()
+
+
 @pytest.mark.skipif(IS_WINDOWS, reason="Errors on Windows")
 class TestSocket:
     @fixture
     def client_fd(self):
-        class Server(socketserver.ThreadingTCPServer):
-            allow_reuse_address = True
-
-        class StoreEchoHandler(socketserver.BaseRequestHandler):
-            def handle(self):
-                while True:
-                    try:
-                        ts = tskit.load(self.request.fileno())
-                    except EOFError:
-                        break
-                    ts.dump(self.request.fileno())
-                self.server.shutdown()
-
-        def server_process(q):
-            server = Server(ADDRESS, StoreEchoHandler)
-            # Tell the client (on the other end of the queue) that it's OK to open
-            # a connection
-            q.put(None)
-            server.serve_forever()
-
         # Use a queue to synchronise the startup of the server and the client.
         q = multiprocessing.Queue()
         _server_process = multiprocessing.Process(target=server_process, args=(q,))
         _server_process.start()
-        q.get()
+        q.get(timeout=3)
         client = socket.create_connection(ADDRESS)
         yield client.fileno()
         client.close()
-        _server_process.join()
+        _server_process.join(timeout=3)
 
     def verify_stream(self, ts_list, client_fd):
         for ts in ts_list:
@@ -300,8 +303,6 @@ class TestSocket:
             echo_ts = tskit.load(client_fd)
             assert ts.tables == echo_ts.tables
 
-    def test_single(self, ts_fixture, client_fd):
+    def test_single_then_multi(self, ts_fixture, replicate_ts_fixture, client_fd):
         self.verify_stream([ts_fixture], client_fd)
-
-    def test_multi(self, replicate_ts_fixture, client_fd):
         self.verify_stream(replicate_ts_fixture, client_fd)

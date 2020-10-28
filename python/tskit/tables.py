@@ -140,6 +140,15 @@ class ProvenanceTableRow:
     record: str
 
 
+@attr.s(**attr_options)
+class TableCollectionIndexes:
+    edge_insertion_order: np.ndarray
+    edge_removal_order: np.ndarray
+
+    def asdict(self):
+        return attr.asdict(self)
+
+
 def keep_with_offset(keep, data, offset):
     """
     Used when filtering _offset columns in tables
@@ -187,14 +196,28 @@ class BaseTable:
     def max_rows_increment(self):
         return self.ll_table.max_rows_increment
 
-    def __eq__(self, other):
+    def equals(self, other, ignore_metadata=False):
+        """
+        Returns True if  `self` and `other` are equal. By default, two tables
+        are considered equal if their columns and metadata schemas are
+        byte-for-byte identical.
+
+        :param other: Another table instance
+        :param bool ignore_metadata: If True exclude metadata and metadata schemas
+            from the comparison.
+        :return: True if other is equal to this table; False otherwise.
+        :rtype: bool
+        """
+        # Note: most tables support ignore_metadata, we can override for those that don't
         ret = False
         if type(other) is type(self):
-            ret = bool(self.ll_table.equals(other.ll_table))
+            ret = bool(
+                self.ll_table.equals(other.ll_table, ignore_metadata=ignore_metadata)
+            )
         return ret
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+    def __eq__(self, other):
+        return self.equals(other)
 
     def __len__(self):
         return self.num_rows
@@ -1822,6 +1845,26 @@ class ProvenanceTable(BaseTable):
             ll_table = _tskit.ProvenanceTable(max_rows_increment=max_rows_increment)
         super().__init__(ll_table, ProvenanceTableRow)
 
+    def equals(self, other, ignore_timestamps=False):
+        """
+        Returns True if  `self` and `other` are equal. By default, two provenance
+        tables are considered equal if their columns are byte-for-byte identical.
+
+        :param other: Another provenance table instance
+        :param bool ignore_timestamps: If True exclude the timestamp column
+            from the comparison.
+        :return: True if other is equal to this provenance table; False otherwise.
+        :rtype: bool
+        """
+        ret = False
+        if type(other) is type(self):
+            ret = bool(
+                self.ll_table.equals(
+                    other.ll_table, ignore_timestamps=ignore_timestamps
+                )
+            )
+        return ret
+
     def add_row(self, record, timestamp=None):
         """
         Adds a new row to this ProvenanceTable consisting of the specified record and
@@ -1991,6 +2034,7 @@ class TableCollection:
     :vartype populations: PopulationTable
     :ivar provenances: The provenance table.
     :vartype provenances: ProvenanceTable
+    :ivar index: The edge insertion and removal index.
     :ivar sequence_length: The sequence length defining the coordinate
         space.
     :vartype sequence_length: float
@@ -2033,6 +2077,10 @@ class TableCollection:
     @property
     def provenances(self):
         return ProvenanceTable(ll_table=self._ll_tables.provenances)
+
+    @property
+    def indexes(self):
+        return TableCollectionIndexes(**self._ll_tables.indexes)
 
     @property
     def sequence_length(self):
@@ -2146,14 +2194,59 @@ class TableCollection:
         s += str(self.provenances)
         return s
 
-    def __eq__(self, other):
+    def equals(
+        self,
+        other,
+        ignore_metadata=False,
+        ignore_ts_metadata=False,
+        ignore_provenance=False,
+        ignore_timestamps=False,
+    ):
+        """
+        Returns True if  `self` and `other` are equal. By default, two table
+        collections are considered equal if their
+
+        - ``sequence_length`` properties are identical;
+        - top-level tree sequence metadata and metadata schemas are
+          byte-wise identical;
+        - constituent tables are byte-wise identical.
+
+        Some of the requirements in this definition can be relaxed using the
+        parameters, which can be used to remove certain parts of the data model
+        from the comparison.
+
+        Table indexes are not considered in the equality comparison.
+
+        :param TableCollection other: Another table collection.
+        :param bool ignore_metadata: If True *all* metadata and metadata schemas
+            will be excluded from the comparison. This includes the top-level
+            tree sequence and constituent table metadata (default=False).
+        :param bool ignore_ts_metadata: If True the top-level tree sequence
+            metadata and metadata schemas will be excluded from the comparison.
+            If ``ignore_metadata`` is True, this parameter has no effect.
+        :param bool ignore_provenance: If True the provenance tables are
+            not included in the comparison.
+        :param bool ignore_timestamps: If True the provenance timestamp column
+            is ignored in the comparision. If ``ignore_provenance`` is True, this
+            parameter has no effect.
+        :return: True if other is equal to this table collection; False otherwise.
+        :rtype: bool
+        """
         ret = False
         if type(other) is type(self):
-            ret = bool(self._ll_tables.equals(other._ll_tables))
+            ret = bool(
+                self._ll_tables.equals(
+                    other._ll_tables,
+                    ignore_metadata=bool(ignore_metadata),
+                    ignore_ts_metadata=bool(ignore_ts_metadata),
+                    ignore_provenance=bool(ignore_provenance),
+                    ignore_timestamps=bool(ignore_timestamps),
+                )
+            )
         return ret
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+    def __eq__(self, other):
+        return self.equals(other)
 
     def __getstate__(self):
         return self.asdict()
@@ -2212,12 +2305,15 @@ class TableCollection:
         in canonical form (i.e., does not meet sorting requirements) or cannot be
         interpreted as a tree sequence an exception is raised. The
         :meth:`.sort` method may be used to ensure that input sorting requirements
-        are met.
+        are met. If the table collection does not have indexes they will be
+        built.
 
         :return: A :class:`TreeSequence` instance reflecting the structures
             defined in this set of tables.
         :rtype: .TreeSequence
         """
+        if not self.has_index():
+            self.build_index()
         return tskit.TreeSequence.load_tables(self)
 
     def simplify(
@@ -2793,31 +2889,6 @@ class TableCollection:
             self.provenances.add_row(
                 record=json.dumps(provenance.get_provenance_dict(parameters))
             )
-
-    def equals(self, other, ignore_top_level_metadata=False, ignore_provenance=False):
-        """
-        Returns True if  `self` and `other` are equal. The comparison of
-        top-level metadata/metadata schema and provenance tables may be
-        disabled with the flags `ignore_top_level_metadata` and `ignore_provenance`,
-        which are false by default. Note that table row-level metadata and table
-        schemas are always checked.
-
-        :param TableCollection other: Another table collection.
-        :param bool ignore_top_level_metadata: If True, the top-level metadata and
-            metadata schema are ignored.
-        :param bool ignore_provenance: If True, the provenance tables are
-            ignored.
-        """
-        ret = False
-        if type(other) is type(self):
-            ret = bool(
-                self._ll_tables.equals(
-                    other._ll_tables,
-                    ignore_top_level_metadata=ignore_top_level_metadata,
-                    ignore_provenance=ignore_provenance,
-                )
-            )
-        return ret
 
     def find_ibd(self, samples, max_time=None, min_length=None):
         max_time = sys.float_info.max if max_time is None else max_time
