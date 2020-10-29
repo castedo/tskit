@@ -6335,7 +6335,7 @@ out:
 /* Run the Python callable that takes X as parameter and must return a
  * 1D array of length M that we copy in to the Y array */
 static int
-general_stat_func(size_t K, double *X, size_t M, double *Y, void *params)
+general_stat_func(size_t K, const double *X, size_t M, double *Y, void *params)
 {
     int ret = TSK_PYTHON_CALLBACK_ERROR;
     PyObject *callable = (PyObject *) params;

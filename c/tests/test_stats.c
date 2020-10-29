@@ -294,7 +294,7 @@ typedef struct {
 
 static int
 general_stat_error(
-    size_t TSK_UNUSED(K), double *TSK_UNUSED(X), size_t M, double *Y, void *params)
+    size_t TSK_UNUSED(K), const double *TSK_UNUSED(X), size_t M, double *Y, void *params)
 {
     int ret = 0;
     CU_ASSERT_FATAL(M == 1);
@@ -612,7 +612,8 @@ verify_four_way_stat_func_errors(tsk_treeseq_t *ts, general_sample_stat_method *
 }
 
 static int
-general_stat_identity(size_t K, double *restrict X, size_t M, double *Y, void *params)
+general_stat_identity(
+    size_t K, const double *restrict X, size_t M, double *Y, void *params)
 {
     size_t k;
     CU_ASSERT_FATAL(M == K);
@@ -685,7 +686,7 @@ verify_branch_general_stat_identity(tsk_treeseq_t *ts)
 }
 
 static int
-general_stat_sum(size_t K, double *restrict X, size_t M, double *Y, void *params)
+general_stat_sum(size_t K, const double *restrict X, size_t M, double *Y, void *params)
 {
     size_t k, m;
     double s = 0;

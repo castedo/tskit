@@ -1628,8 +1628,8 @@ typedef struct {
 } unpolarised_summary_func_args;
 
 static int
-unpolarised_summary_func(
-    size_t state_dim, double *state, size_t result_dim, double *result, void *params)
+unpolarised_summary_func(size_t state_dim, const double *state, size_t result_dim,
+    double *result, void *params)
 {
     int ret = 0;
     unpolarised_summary_func_args *upargs = (unpolarised_summary_func_args *) params;
@@ -2349,8 +2349,8 @@ out:
  ***********************************/
 
 static int
-diversity_summary_func(size_t state_dim, double *state, size_t TSK_UNUSED(result_dim),
-    double *result, void *params)
+diversity_summary_func(size_t state_dim, const double *state,
+    size_t TSK_UNUSED(result_dim), double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
     const double *x = state;
@@ -2375,7 +2375,7 @@ tsk_treeseq_diversity(const tsk_treeseq_t *self, tsk_size_t num_sample_sets,
 }
 
 static int
-trait_covariance_summary_func(size_t state_dim, double *state,
+trait_covariance_summary_func(size_t state_dim, const double *state,
     size_t TSK_UNUSED(result_dim), double *result, void *params)
 {
     weight_stat_params_t args = *(weight_stat_params_t *) params;
@@ -2436,7 +2436,7 @@ out:
 }
 
 static int
-trait_correlation_summary_func(size_t state_dim, double *state,
+trait_correlation_summary_func(size_t state_dim, const double *state,
     size_t TSK_UNUSED(result_dim), double *result, void *params)
 {
     weight_stat_params_t args = *(weight_stat_params_t *) params;
@@ -2518,8 +2518,8 @@ out:
 }
 
 static int
-trait_regression_summary_func(
-    size_t state_dim, double *state, size_t result_dim, double *result, void *params)
+trait_regression_summary_func(size_t state_dim, const double *state, size_t result_dim,
+    double *result, void *params)
 {
     covariates_stat_params_t args = *(covariates_stat_params_t *) params;
     const double num_samples = (double) args.num_samples;
@@ -2632,7 +2632,7 @@ out:
 }
 
 static int
-segregating_sites_summary_func(size_t state_dim, double *state,
+segregating_sites_summary_func(size_t state_dim, const double *state,
     size_t TSK_UNUSED(result_dim), double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2659,7 +2659,7 @@ tsk_treeseq_segregating_sites(const tsk_treeseq_t *self, tsk_size_t num_sample_s
 }
 
 static int
-Y1_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+Y1_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2714,8 +2714,8 @@ out:
 }
 
 static int
-divergence_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
-    double *result, void *params)
+divergence_summary_func(size_t TSK_UNUSED(state_dim), const double *state,
+    size_t result_dim, double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
     const double *x = state;
@@ -2753,7 +2753,7 @@ out:
 }
 
 static int
-Y2_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+Y2_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2792,7 +2792,7 @@ out:
 }
 
 static int
-f2_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+f2_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2837,7 +2837,7 @@ out:
  ***********************************/
 
 static int
-Y3_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+Y3_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2879,7 +2879,7 @@ out:
 }
 
 static int
-f3_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+f3_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
@@ -2926,7 +2926,7 @@ out:
  ***********************************/
 
 static int
-f4_summary_func(size_t TSK_UNUSED(state_dim), double *state, size_t result_dim,
+f4_summary_func(size_t TSK_UNUSED(state_dim), const double *state, size_t result_dim,
     double *result, void *params)
 {
     sample_count_stat_params_t args = *(sample_count_stat_params_t *) params;
