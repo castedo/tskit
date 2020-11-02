@@ -287,7 +287,8 @@ int tsk_treeseq_mean_descendants(const tsk_treeseq_t *self,
 
 /* TODO change all these size_t's to tsk_size_t */
 
-typedef int general_stat_func_t(size_t K, double *X, size_t M, double *Y, void *params);
+typedef int general_stat_func_t(size_t state_dim, const double *state, size_t result_dim,
+    double *result, void *params);
 
 int tsk_treeseq_general_stat(const tsk_treeseq_t *self, size_t K, const double *W,
     size_t M, general_stat_func_t *f, void *f_params, size_t num_windows,

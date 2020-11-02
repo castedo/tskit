@@ -1,4 +1,4 @@
-name: Build and deploy docs
+name: Docs
 
 on:
   pull_request_target:
@@ -9,8 +9,14 @@ on:
 
 jobs:
   build-deploy-docs:
+    name: Build
     runs-on: ubuntu-18.04
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
+
       - uses: actions/checkout@v2
         # As we are using pull-request-target which uses the workflow from the base
         # of the PR, we need to be specific
@@ -36,6 +42,7 @@ jobs:
         run: make -C docs
 
       - name: Checkout docs site
+        if: github.repository_owner == 'tskit-dev'
         uses: actions/checkout@v2
         with:
           repository: tskit-dev/tskit-docs
@@ -43,14 +50,14 @@ jobs:
           path: tskit-docs
 
       - name: Copy our docs to the PR specific location
-        if: github.event.pull_request
+        if: github.repository_owner == 'tskit-dev' && github.event.pull_request
         run: |
           cd tskit-docs
           rm -rf ${{github.event.pull_request.number}}
           cp -r ../docs/_build/html ${{github.event.pull_request.number}}
 
       - name: Copy our docs to the tag specific location
-        if: (!github.event.pull_request)
+        if: github.repository_owner == 'tskit-dev' && !github.event.pull_request
         run: |
           cd tskit-docs
           export DEST=`echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g" |  sed -e "s/refs\/tags\///g"`
@@ -58,6 +65,7 @@ jobs:
           cp -r ../docs/_build/html $DEST
 
       - name: Commit and push the docs
+        if: github.repository_owner == 'tskit-dev'
         run: |
           cd tskit-docs
           git config user.name Adminbot-tskit
@@ -67,7 +75,7 @@ jobs:
           git push
 
       - name: Comment on PR
-        if: github.event.pull_request
+        if: github.repository_owner == 'tskit-dev' && github.event.pull_request
         uses: mshick/add-pr-comment@v1
         with:
           message: |
