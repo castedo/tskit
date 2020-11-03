@@ -103,9 +103,9 @@ out:
 }
 
 static int
-init_samples_and_index_map(const tsk_treeseq_t *tree_sequence, const tsk_id_t *samples,
-    size_t num_samples, size_t num_samples_alloc, tsk_flags_t options,
-    tsk_id_t **ret_samples, tsk_id_t **ret_sample_index_map)
+vargen_init_samples_and_index_map(tsk_vargen_t *self, const tsk_treeseq_t *tree_sequence,
+    const tsk_id_t *samples, size_t num_samples, size_t num_samples_alloc,
+    tsk_flags_t options)
 {
     int ret = 0;
     const tsk_flags_t *flags = tree_sequence->tables->nodes.flags;
@@ -114,14 +114,15 @@ init_samples_and_index_map(const tsk_treeseq_t *tree_sequence, const tsk_id_t *s
     tsk_id_t u;
 
     num_nodes = tsk_treeseq_get_num_nodes(tree_sequence);
-    *ret_samples = malloc(num_samples_alloc * sizeof(*samples));
-    *ret_sample_index_map = malloc(num_nodes * sizeof(**ret_sample_index_map));
-    if (*ret_samples == NULL || *ret_sample_index_map == NULL) {
+    self->alt_samples = malloc(num_samples_alloc * sizeof(*samples));
+    self->alt_sample_index_map = malloc(num_nodes * sizeof(*self->alt_sample_index_map));
+    if (self->alt_samples == NULL || self->alt_sample_index_map == NULL) {
         ret = TSK_ERR_NO_MEMORY;
         goto out;
     }
-    memcpy(*ret_samples, samples, num_samples * sizeof(*samples));
-    memset(*ret_sample_index_map, 0xff, num_nodes * sizeof(**ret_sample_index_map));
+    memcpy(self->alt_samples, samples, num_samples * sizeof(*samples));
+    memset(self->alt_sample_index_map, 0xff,
+        num_nodes * sizeof(*self->alt_sample_index_map));
     /* Create the reverse mapping */
     for (j = 0; j < num_samples; j++) {
         u = samples[j];
@@ -129,7 +130,7 @@ init_samples_and_index_map(const tsk_treeseq_t *tree_sequence, const tsk_id_t *s
             ret = TSK_ERR_OUT_OF_BOUNDS;
             goto out;
         }
-        if ((*ret_sample_index_map)[u] != TSK_NULL) {
+        if (self->alt_sample_index_map[u] != TSK_NULL) {
             ret = TSK_ERR_DUPLICATE_SAMPLE;
             goto out;
         }
@@ -138,7 +139,7 @@ init_samples_and_index_map(const tsk_treeseq_t *tree_sequence, const tsk_id_t *s
             ret = TSK_ERR_MUST_IMPUTE_NON_SAMPLES;
             goto out;
         }
-        (*ret_sample_index_map)[samples[j]] = (tsk_id_t) j;
+        self->alt_sample_index_map[samples[j]] = (tsk_id_t) j;
     }
 out:
     return ret;
@@ -165,8 +166,8 @@ tsk_vargen_init(tsk_vargen_t *self, const tsk_treeseq_t *tree_sequence,
         /* Take a copy of the samples for simplicity */
         /* We can have num_samples = 0 here, so guard against malloc(0) */
         num_samples_alloc = num_samples + 1;
-        ret = init_samples_and_index_map(tree_sequence, samples, num_samples,
-            num_samples_alloc, options, &self->alt_samples, &self->alt_sample_index_map);
+        ret = vargen_init_samples_and_index_map(
+            self, tree_sequence, samples, num_samples, num_samples_alloc, options);
         if (ret != 0) {
             goto out;
         }
